@@ -162,7 +162,7 @@ export class AppCustomImages {
       if (filePicker.files && filePicker.files.length > 0) {
         this.uploading = true;
 
-        const storageFile: StorageFile = await this.storageService.uploadFile(filePicker.files[0], 'images', 10485760);
+        const storageFile: StorageFile | null = await this.storageService.uploadFile(filePicker.files[0], 'images', 10485760);
 
         if (storageFile) {
           await this.selectAndClose(storageFile);

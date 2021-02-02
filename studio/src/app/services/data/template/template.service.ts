@@ -1,10 +1,23 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import {
+  DocumentReference,
+  QuerySnapshot,
+  QueryDocumentSnapshot,
+  addDoc,
+  collection,
+  serverTimestamp,
+  where,
+  orderBy,
+  query,
+  getDocs,
+  setDoc,
+  doc,
+} from 'firebase/firestore/lite';
 
 import templatesStore from '../../../stores/templates.store';
 import authStore from '../../../stores/auth.store';
 
 import {Template, TemplateData} from '../../../models/data/template';
+import {db} from '../../../utils/editor/firestore.utils';
 
 export class TemplateService {
   private static instance: TemplateService;
@@ -45,17 +58,11 @@ export class TemplateService {
   private getUserTemplates(): Promise<Template[]> {
     return new Promise<Template[]>(async (resolve, reject) => {
       try {
-        const firestore: firebase.firestore.Firestore = firebase.firestore();
-
         const userId: string = authStore.state.authUser.uid;
 
-        const snapshot: firebase.firestore.QuerySnapshot = await firestore
-          .collection('templates')
-          .where('owner_id', '==', userId)
-          .orderBy('updated_at', 'desc')
-          .get();
+        const snapshot: QuerySnapshot = await getDocs(query(collection(db, 'templates'), where('owner_id', '==', userId), orderBy('updated_at', 'desc')));
 
-        const templates: Template[] = snapshot.docs.map((documentSnapshot: firebase.firestore.QueryDocumentSnapshot) => {
+        const templates: Template[] = snapshot.docs.map((documentSnapshot: QueryDocumentSnapshot) => {
           return {
             id: documentSnapshot.id,
             data: documentSnapshot.data() as TemplateData,
@@ -71,38 +78,30 @@ export class TemplateService {
 
   create(templateData: TemplateData): Promise<Template> {
     return new Promise<Template>(async (resolve, reject) => {
-      const firestore: firebase.firestore.Firestore = firebase.firestore();
-
-      const now: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
+      const now = serverTimestamp();
       templateData.created_at = now;
       templateData.updated_at = now;
 
-      firestore
-        .collection('templates')
-        .add(templateData)
-        .then(
-          async (doc: firebase.firestore.DocumentReference) => {
-            resolve({
-              id: doc.id,
-              data: templateData,
-            });
-          },
-          (err) => {
-            reject(err);
-          }
-        );
+      try {
+        const doc: DocumentReference = await addDoc(collection(db, 'templates'), templateData);
+
+        resolve({
+          id: doc.id,
+          data: templateData,
+        });
+      } catch (err) {
+        reject(err);
+      }
     });
   }
 
   update(template: Template): Promise<Template> {
     return new Promise<Template>(async (resolve, reject) => {
-      const firestore: firebase.firestore.Firestore = firebase.firestore();
-
-      const now: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
+      const now = serverTimestamp();
       template.data.updated_at = now;
 
       try {
-        await firestore.collection('templates').doc(template.id).set(template.data, {merge: true});
+        await setDoc(doc(collection(db, 'templates'), template.id), template.data, {merge: true});
 
         resolve(template);
       } catch (err) {

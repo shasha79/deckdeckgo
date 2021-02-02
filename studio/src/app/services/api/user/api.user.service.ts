@@ -1,10 +1,8 @@
-import firebase from '@firebase/app';
-import '@firebase/auth';
-
 import apiUserStore from '../../../stores/api.user.store';
 
 import {ApiUser, ApiUserInfo} from '../../../models/api/api.user';
 import {AuthUser} from '../../../models/auth/auth.user';
+import {auth} from '../../../utils/editor/firestore.utils';
 
 export abstract class ApiUserService {
   abstract query(apiUserInfo: ApiUserInfo | ApiUser, token: string, context: string, method: string): Promise<ApiUser>;
@@ -30,7 +28,7 @@ export abstract class ApiUserService {
           if (!user) {
             const apiUser: ApiUserInfo = await this.createUserInfo(authUser);
 
-            const token: string = await firebase.auth().currentUser.getIdToken();
+            const token: string = await auth.currentUser.getIdToken();
 
             await this.post(apiUser, token);
           }

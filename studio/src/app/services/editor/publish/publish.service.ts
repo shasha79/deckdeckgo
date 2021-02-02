@@ -1,6 +1,4 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/auth';
+import {deleteField, serverTimestamp, collection, doc, onSnapshot, DocumentSnapshot} from 'firebase/firestore';
 
 import deckStore from '../../../stores/deck.store';
 import userStore from '../../../stores/user.store';
@@ -15,6 +13,8 @@ import {DeckService} from '../../data/deck/deck.service';
 
 import {EnvironmentConfigService} from '../../core/environment/environment-config.service';
 import {EnvironmentFirebaseConfig} from '../../../types/core/environment-config';
+
+import {auth, db} from '../../../utils/editor/firestore.utils';
 
 export class PublishService {
   private static instance: PublishService;
@@ -56,7 +56,7 @@ export class PublishService {
       try {
         const config: EnvironmentFirebaseConfig = EnvironmentConfigService.getInstance().get('firebase');
 
-        const token: string = await firebase.auth().currentUser.getIdToken();
+        const token: string = await auth.currentUser.getIdToken();
 
         const rawResponse: Response = await fetch(`${config.functionsUrl}/publish`, {
           method: 'POST',
@@ -93,7 +93,7 @@ export class PublishService {
           return;
         }
 
-        const now: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
+        const now = serverTimestamp();
 
         const deck: Deck = {...deckStore.state.deck};
 
@@ -110,11 +110,11 @@ export class PublishService {
         if (description && description !== undefined && description !== '') {
           deck.data.meta.description = description;
         } else {
-          deck.data.meta.description = firebase.firestore.FieldValue.delete();
+          deck.data.meta.description = deleteField();
         }
 
         if (!tags || tags.length <= 0) {
-          deck.data.meta.tags = firebase.firestore.FieldValue.delete();
+          deck.data.meta.tags = deleteField();
         } else {
           deck.data.meta.tags = tags;
         }
@@ -138,14 +138,14 @@ export class PublishService {
               acc[key] =
                 userStore.state.user.data.social[key] !== null && userStore.state.user.data.social[key] !== undefined
                   ? userStore.state.user.data.social[key]
-                  : firebase.firestore.FieldValue.delete();
+                  : deleteField();
               return acc;
             }, {} as UserSocial);
           } else {
-            (deck.data.meta.author as DeckMetaAuthor).social = firebase.firestore.FieldValue.delete();
+            (deck.data.meta.author as DeckMetaAuthor).social = deleteField();
           }
         } else if (deck.data.meta.author) {
-          deck.data.meta.author = firebase.firestore.FieldValue.delete();
+          deck.data.meta.author = deleteField();
         }
 
         // Update GitHub info (push or not) for GitHub users so next time user publish, the choice is kept
@@ -178,21 +178,18 @@ export class PublishService {
         return;
       }
 
-      const firestore: firebase.firestore.Firestore = firebase.firestore();
-      const unsubscribe = firestore
-        .collection(`decks`)
-        .doc(deck.id)
-        .onSnapshot(
-          (deploySnapshot: firebase.firestore.DocumentSnapshot<DeckData>) => {
-            deckStore.state.deck = {
-              id: deploySnapshot.id,
-              data: deploySnapshot.data(),
-            };
-          },
-          (_err) => {
-            errorStore.state.error = 'Cannont retrieve the deck information.';
-          }
-        );
+      const unsubscribe = onSnapshot(
+        doc(collection(db, 'decks'), deck.id),
+        (deploySnapshot: DocumentSnapshot<DeckData>) => {
+          deckStore.state.deck = {
+            id: deploySnapshot.id,
+            data: deploySnapshot.data(),
+          };
+        },
+        (_err) => {
+          errorStore.state.error = 'Cannont retrieve the deck information.';
+        }
+      );
 
       resolve(unsubscribe);
     });

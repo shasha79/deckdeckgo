@@ -1,7 +1,7 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import {DocumentReference, addDoc, collection, serverTimestamp, deleteDoc, DocumentSnapshot, getDoc, doc, setDoc} from 'firebase/firestore/lite';
 
 import {Slide, SlideData} from '../../../models/data/slide';
+import {db} from '../../../utils/editor/firestore.utils';
 
 export class SlideOnlineService {
   private static instance: SlideOnlineService;
@@ -19,35 +19,27 @@ export class SlideOnlineService {
 
   create(deckId: string, slide: SlideData): Promise<Slide> {
     return new Promise<Slide>(async (resolve, reject) => {
-      const firestore: firebase.firestore.Firestore = firebase.firestore();
-
-      const now: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
+      const now = serverTimestamp();
       slide.created_at = now;
       slide.updated_at = now;
 
-      firestore
-        .collection(`/decks/${deckId}/slides`)
-        .add(slide)
-        .then(
-          async (doc: firebase.firestore.DocumentReference) => {
-            resolve({
-              id: doc.id,
-              data: slide,
-            });
-          },
-          (err) => {
-            reject(err);
-          }
-        );
+      try {
+        const doc: DocumentReference = await addDoc(collection(db, `/decks/${deckId}/slides`), slide);
+
+        resolve({
+          id: doc.id,
+          data: slide,
+        });
+      } catch (err) {
+        reject(err);
+      }
     });
   }
 
   get(deckId: string, slideId: string): Promise<Slide> {
     return new Promise<Slide>(async (resolve, reject) => {
-      const firestore: firebase.firestore.Firestore = firebase.firestore();
-
       try {
-        const snapshot: firebase.firestore.DocumentSnapshot = await firestore.collection(`/decks/${deckId}/slides`).doc(slideId).get();
+        const snapshot: DocumentSnapshot = await getDoc(doc(collection(db, `/decks/${deckId}/slides`), slideId));
 
         if (!snapshot.exists) {
           reject('Slide not found');
@@ -68,13 +60,11 @@ export class SlideOnlineService {
 
   update(deckId: string, slide: Slide): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
-      const firestore: firebase.firestore.Firestore = firebase.firestore();
-
-      const now: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
+      const now = serverTimestamp();
       slide.data.updated_at = now;
 
       try {
-        await firestore.collection(`/decks/${deckId}/slides`).doc(slide.id).set(slide.data, {merge: true});
+        await setDoc(doc(collection(db, `/decks/${deckId}/slides`), slide.id), slide.data, {merge: true});
 
         resolve();
       } catch (err) {
@@ -86,9 +76,7 @@ export class SlideOnlineService {
   delete(deckId: string, slideId: string): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        const firestore: firebase.firestore.Firestore = firebase.firestore();
-
-        await firestore.collection(`/decks/${deckId}/slides`).doc(slideId).delete();
+        await deleteDoc(doc(collection(db, `/decks/${deckId}/slides`), slideId));
 
         resolve();
       } catch (err) {

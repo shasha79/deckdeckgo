@@ -1,11 +1,24 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import {
+  DocumentReference,
+  QuerySnapshot,
+  QueryDocumentSnapshot,
+  addDoc,
+  collection,
+  serverTimestamp,
+  where,
+  orderBy,
+  query,
+  getDocs,
+  deleteDoc,
+} from 'firebase/firestore/lite';
 
 import {Deck, DeckData} from '../../../models/data/deck';
 
 import {DeckOfflineService} from './deck.offline.service';
 import {DeckOnlineService} from './deck.online.service';
 import {OfflineService} from '../../editor/offline/offline.service';
+import {db} from '../../../utils/editor/firestore.utils';
+import {doc} from 'firebase/firestore/lite';
 
 export class DeckService {
   private static instance: DeckService;
@@ -23,26 +36,20 @@ export class DeckService {
 
   create(deck: DeckData): Promise<Deck> {
     return new Promise<Deck>(async (resolve, reject) => {
-      const firestore: firebase.firestore.Firestore = firebase.firestore();
-
-      const now: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
+      const now = serverTimestamp();
       deck.created_at = now;
       deck.updated_at = now;
 
-      firestore
-        .collection('decks')
-        .add(deck)
-        .then(
-          async (doc: firebase.firestore.DocumentReference) => {
-            resolve({
-              id: doc.id,
-              data: deck,
-            });
-          },
-          (err) => {
-            reject(err);
-          }
-        );
+      try {
+        const doc: DocumentReference = await addDoc(collection(db, 'decks'), deck);
+
+        resolve({
+          id: doc.id,
+          data: deck,
+        });
+      } catch (err) {
+        reject(err);
+      }
     });
   }
 
@@ -69,15 +76,9 @@ export class DeckService {
   getUserDecks(userId: string): Promise<Deck[]> {
     return new Promise<Deck[]>(async (resolve, reject) => {
       try {
-        const firestore: firebase.firestore.Firestore = firebase.firestore();
+        const snapshot: QuerySnapshot = await getDocs(query(collection(db, 'decks'), where('owner_id', '==', userId), orderBy('updated_at', 'desc')));
 
-        const snapshot: firebase.firestore.QuerySnapshot = await firestore
-          .collection('decks')
-          .where('owner_id', '==', userId)
-          .orderBy('updated_at', 'desc')
-          .get();
-
-        const decks: Deck[] = snapshot.docs.map((documentSnapshot: firebase.firestore.QueryDocumentSnapshot) => {
+        const decks: Deck[] = snapshot.docs.map((documentSnapshot: QueryDocumentSnapshot) => {
           return {
             id: documentSnapshot.id,
             data: documentSnapshot.data() as DeckData,
@@ -120,9 +121,7 @@ export class DeckService {
   delete(deckId: string): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        const firestore: firebase.firestore.Firestore = firebase.firestore();
-
-        await firestore.collection('decks').doc(deckId).delete();
+        await deleteDoc(doc(collection(db, 'decks'), deckId));
 
         resolve();
       } catch (err) {

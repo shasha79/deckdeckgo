@@ -1,8 +1,7 @@
 import {Component, Element, Prop, State, Watch, h} from '@stencil/core';
 
-import firebase from '@firebase/app';
-import '@firebase/auth';
-import {User as FirebaseUser, UserCredential, AuthCredential, OAuthCredential} from '@firebase/auth-types';
+import {GoogleAuthProvider, GithubAuthProvider, EmailAuthProvider, signInWithCredential} from 'firebase/auth';
+import {User as FirebaseUser, UserCredential, AuthCredential} from '@firebase/auth-types';
 
 import navStore, {NavDirection} from '../../../stores/nav.store';
 import authStore from '../../../stores/auth.store';
@@ -16,6 +15,7 @@ import {EnvironmentDeckDeckGoConfig} from '../../../types/core/environment-confi
 import {EnvironmentConfigService} from '../../../services/core/environment/environment-config.service';
 import {UserService} from '../../../services/data/user/user.service';
 import {DeckService} from '../../../services/data/deck/deck.service';
+import {auth} from '../../../utils/editor/firestore.utils';
 
 @Component({
   tag: 'app-signin',
@@ -79,15 +79,15 @@ export class AppSignIn {
 
     // GitHub scope
     signInOptions.push({
-      provider: firebase.auth.GithubAuthProvider.PROVIDER_ID,
+      provider: GithubAuthProvider.PROVIDER_ID,
       scopes: ['public_repo'],
     });
 
-    signInOptions.push(firebase.auth.GoogleAuthProvider.PROVIDER_ID);
+    signInOptions.push(GoogleAuthProvider.PROVIDER_ID);
 
-    signInOptions.push(firebase.auth.EmailAuthProvider.PROVIDER_ID);
+    signInOptions.push(EmailAuthProvider.PROVIDER_ID);
 
-    this.firebaseUser = firebase.auth().currentUser;
+    this.firebaseUser = auth.currentUser;
 
     const uiConfig = {
       signInFlow: 'redirect',
@@ -131,7 +131,7 @@ export class AppSignIn {
 
     await this.saveRedirect();
 
-    const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(firebase.auth());
+    const ui = firebaseui.auth.AuthUI.getInstance() || new firebaseui.auth.AuthUI(auth);
 
     if (!ui.isPendingRedirect()) {
       ui.reset();
@@ -178,7 +178,7 @@ export class AppSignIn {
   };
 
   private async signInWithCredential(cred: AuthCredential) {
-    const userCred: UserCredential = await firebase.auth().signInWithCredential(cred);
+    const userCred: UserCredential = await signInWithCredential(auth, cred);
 
     this.saveGithubCredentials(userCred);
   }
@@ -220,7 +220,7 @@ export class AppSignIn {
 
     let token: string | null = null;
     if (authStore.state.authUser) {
-      token = await firebase.auth().currentUser?.getIdToken();
+      token = await auth.currentUser?.getIdToken();
     }
 
     localStorage.setItem(
@@ -267,7 +267,9 @@ export class AppSignIn {
       return;
     }
 
-    if (!userCred.credential || userCred.credential.providerId !== 'github.com' || !(userCred.credential as OAuthCredential).accessToken) {
+    // TODO: (userCred as OAuthCredential)
+    // TODO: userCred.credential or userCred (userCred.credential as OAuthCredential)
+    if (!userCred || userCred.providerId !== 'github.com' || !(userCred as any).accessToken) {
       return;
     }
 
@@ -275,7 +277,7 @@ export class AppSignIn {
       id: userCred.user.uid,
       data: {
         github: {
-          token: (userCred.credential as OAuthCredential).accessToken,
+          token: (userCred as any).accessToken,
         },
       },
     };

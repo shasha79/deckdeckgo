@@ -1,5 +1,15 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import {initializeApp} from 'firebase/app';
+import {deleteField} from 'firebase/firestore';
+import {getFirestore} from 'firebase/firestore/lite';
+import {getStorage} from 'firebase/storage';
+import {getAuth} from 'firebase/auth';
+
+import {EnvironmentConfigService} from '../../services/core/environment/environment-config.service';
+
+const firebaseApp = initializeApp(EnvironmentConfigService.getInstance().get('firebase'));
+export const auth = getAuth(firebaseApp);
+export const db = getFirestore(firebaseApp);
+export const storage = getStorage(firebaseApp);
 
 export class FirestoreUtils {
   static filterDelete<T>(obj: T, replaceWithNull: boolean = false): T {
@@ -33,6 +43,6 @@ export class FirestoreUtils {
       return false;
     }
 
-    return JSON.stringify(attr) === JSON.stringify(firebase.firestore.FieldValue.delete());
+    return JSON.stringify(attr) === JSON.stringify(deleteField());
   }
 }

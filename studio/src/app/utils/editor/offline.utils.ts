@@ -1,4 +1,4 @@
-import firebase from 'firebase/app';
+import {deleteField} from 'firebase/firestore';
 
 import {SlideAttributes} from '../../models/data/slide';
 import {DeckAttributes} from '../../models/data/deck';
@@ -24,7 +24,7 @@ export class OfflineUtils {
     return new Promise<SlideAttributes | DeckAttributes>((resolve) => {
       if (!attributes) {
         // @ts-ignore
-        resolve(firebase.firestore.FieldValue.delete());
+        resolve(deleteField());
         return;
       }
 
@@ -32,7 +32,7 @@ export class OfflineUtils {
 
       if (!keys || keys.length <= 0) {
         // @ts-ignore
-        resolve(firebase.firestore.FieldValue.delete());
+        resolve(deleteField());
         return;
       }
 
@@ -42,7 +42,7 @@ export class OfflineUtils {
         // Replace null values with Firestore "to delete fields"
         if (attr === null) {
           // @ts-ignore
-          attributes[key] = firebase.firestore.FieldValue.delete();
+          attributes[key] = deleteField();
         }
       });
 

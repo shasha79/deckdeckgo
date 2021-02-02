@@ -37,12 +37,12 @@ export class GifService {
         resolve(response.tags);
       } catch (err) {
         store.state.error = err.message;
-        resolve();
+        resolve([]);
       }
     });
   }
 
-  getGifs(searchTerm: string, next: string | number): Promise<TenorSearchResponse> {
+  getGifs(searchTerm: string, next: string | number): Promise<TenorSearchResponse | null> {
     return new Promise<TenorSearchResponse>(async (resolve) => {
       const config: EnvironmentTenorConfig = EnvironmentConfigService.getInstance().get('tenor');
 
@@ -68,19 +68,19 @@ export class GifService {
 
         if (!response) {
           store.state.error = 'Tenor trending could not be fetched';
-          resolve();
+          resolve(null);
           return;
         }
 
         resolve(response);
       } catch (err) {
         store.state.error = err.message;
-        resolve();
+        resolve(null);
       }
     });
   }
 
-  getRandomGif(searchTerm: string): Promise<TenorSearchResponse> {
+  getRandomGif(searchTerm: string): Promise<TenorSearchResponse | null> {
     return new Promise<TenorSearchResponse>(async (resolve) => {
       const config: EnvironmentTenorConfig = EnvironmentConfigService.getInstance().get('tenor');
 
@@ -96,14 +96,14 @@ export class GifService {
 
         if (!response) {
           store.state.error = 'Tenor trending could not be fetched';
-          resolve();
+          resolve(null);
           return;
         }
 
         resolve(response);
       } catch (err) {
         // We don't throw an error, in such a case we just not gonna display a gif
-        resolve();
+        resolve(null);
       }
     });
   }

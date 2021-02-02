@@ -1,5 +1,3 @@
-import firebase from 'firebase/app';
-
 export interface TemplateDataSlot {
   name: string;
   placeholder?: string;
@@ -26,8 +24,8 @@ export interface TemplateData {
   slots?: TemplateDataSlot[];
   props?: TemplateDataProp[];
 
-  created_at?: firebase.firestore.Timestamp;
-  updated_at?: firebase.firestore.Timestamp;
+  created_at?;
+  updated_at?;
 }
 
 export interface Template {

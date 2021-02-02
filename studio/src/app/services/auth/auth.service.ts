@@ -1,19 +1,18 @@
-import firebase from '@firebase/app';
-import '@firebase/auth';
 import {User as FirebaseUser} from '@firebase/auth-types';
+import {onAuthStateChanged, signOut, signInAnonymously} from 'firebase/auth';
 
 import errorStore from '../../stores/error.store';
 import authStore from '../../stores/auth.store';
 
 import {get, set, del} from 'idb-keyval';
 
-import {EnvironmentConfigService} from '../core/environment/environment-config.service';
-
 import {AuthUser} from '../../models/auth/auth.user';
 
 import {ApiUserService} from '../api/user/api.user.service';
 import {UserService} from '../data/user/user.service';
 import {ApiUserFactoryService} from '../api/user/api.user.factory.service';
+
+import {auth} from '../../utils/editor/firestore.utils';
 
 export class AuthService {
   private apiUserService: ApiUserService;
@@ -42,9 +41,7 @@ export class AuthService {
       const localUser: AuthUser = await this.getLocalAuthUser();
       authStore.state.authUser = localUser ? {...localUser} : null;
 
-      firebase.initializeApp(EnvironmentConfigService.getInstance().get('firebase'));
-
-      firebase.auth().onAuthStateChanged(async (firebaseUser: FirebaseUser | null) => {
+      onAuthStateChanged(auth, async (firebaseUser: FirebaseUser | null) => {
         if (!firebaseUser) {
           authStore.reset();
           await del('deckdeckgo_auth_user');
@@ -88,7 +85,7 @@ export class AuthService {
   }
 
   async signOut() {
-    await firebase.auth().signOut();
+    await signOut(auth);
 
     await this.apiUserService.signOut();
 
@@ -99,7 +96,7 @@ export class AuthService {
   signInAnonymous(): Promise<void> {
     return new Promise<void>(async (resolve) => {
       try {
-        await firebase.auth().signInAnonymously();
+        await signInAnonymously(auth);
 
         resolve();
       } catch (err) {

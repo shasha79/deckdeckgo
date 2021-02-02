@@ -1,5 +1,3 @@
-import firebase from 'firebase/app';
-
 export interface UserSocial {
   twitter?: string;
   linkedin?: string;
@@ -23,8 +21,8 @@ export interface UserData {
 
   bio?: string;
 
-  created_at: firebase.firestore.Timestamp;
-  updated_at: firebase.firestore.Timestamp;
+  created_at;
+  updated_at;
 }
 
 export interface User {

@@ -1,10 +1,10 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import {collection, serverTimestamp, deleteDoc, DocumentSnapshot, getDoc, doc, setDoc} from 'firebase/firestore/lite';
 
 import store from '../../../stores/user.store';
 
 import {AuthUser} from '../../../models/auth/auth.user';
 import {User, UserData} from '../../../models/data/user';
+import {db} from '../../../utils/editor/firestore.utils';
 
 export class UserService {
   private static instance: UserService;
@@ -28,9 +28,7 @@ export class UserService {
       }
 
       try {
-        const firestore: firebase.firestore.Firestore = firebase.firestore();
-
-        const snapshot: firebase.firestore.DocumentSnapshot = await firestore.collection('users').doc(authUser.uid).get();
+        const snapshot: DocumentSnapshot = await getDoc(doc(collection(db, 'users'), authUser.uid));
 
         if (!snapshot.exists) {
           const user: User = await this.createUser(authUser);
@@ -57,9 +55,7 @@ export class UserService {
   private createUser(authUser: AuthUser): Promise<User> {
     return new Promise<User>(async (resolve, reject) => {
       try {
-        const firestore: firebase.firestore.Firestore = firebase.firestore();
-
-        const now: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
+        const now = serverTimestamp();
 
         const user: UserData = {
           anonymous: authUser.anonymous,
@@ -81,7 +77,7 @@ export class UserService {
           user.photo_url = authUser.photo_url;
         }
 
-        await firestore.collection('users').doc(authUser.uid).set(user, {merge: true});
+        await setDoc(doc(collection(db, 'users'), authUser.uid), user, {merge: true});
 
         resolve({
           id: authUser.uid,
@@ -97,8 +93,6 @@ export class UserService {
     return new Promise<UserData>(async (resolve, reject) => {
       try {
         if (this.userNeedUpdate(authUser, user)) {
-          const firestore: firebase.firestore.Firestore = firebase.firestore();
-
           if (user.anonymous !== authUser.anonymous) {
             user.anonymous = authUser.anonymous;
           }
@@ -115,9 +109,9 @@ export class UserService {
             user.photo_url = authUser.photo_url;
           }
 
-          user.updated_at = firebase.firestore.Timestamp.now();
+          user.updated_at = serverTimestamp();
 
-          await firestore.collection('users').doc(authUser.uid).set(user, {merge: true});
+          await setDoc(doc(collection(db, 'users'), authUser.uid), user, {merge: true});
         }
 
         resolve(user);
@@ -143,13 +137,11 @@ export class UserService {
 
   update(user: User): Promise<User> {
     return new Promise<User>(async (resolve, reject) => {
-      const firestore: firebase.firestore.Firestore = firebase.firestore();
-
-      const now: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
+      const now = serverTimestamp();
       user.data.updated_at = now;
 
       try {
-        await firestore.collection('users').doc(user.id).set(user.data, {merge: true});
+        await setDoc(doc(collection(db, 'users'), user.id), user.data, {merge: true});
 
         store.state.user = {...user};
 
@@ -163,9 +155,7 @@ export class UserService {
   delete(userId: string): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        const firestore: firebase.firestore.Firestore = firebase.firestore();
-
-        await firestore.collection('users').doc(userId).delete();
+        await deleteDoc(doc(collection(db, 'users'), userId));
 
         store.reset();
 

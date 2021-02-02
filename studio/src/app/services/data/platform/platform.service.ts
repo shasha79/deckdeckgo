@@ -1,9 +1,10 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import {serverTimestamp} from 'firebase/firestore/lite';
 
 import errorStore from '../../../stores/error.store';
 
 import {Token} from '../../../models/data/token';
+import {collection, doc, setDoc} from 'firebase/firestore/lite';
+import {db} from '../../../utils/editor/firestore.utils';
 
 export class PlatformService {
   private static instance: PlatformService;
@@ -25,11 +26,9 @@ export class PlatformService {
     }
 
     try {
-      const firestore: firebase.firestore.Firestore = firebase.firestore();
+      token.data.updated_at = serverTimestamp();
 
-      token.data.updated_at = firebase.firestore.Timestamp.now();
-
-      await firestore.collection('tokens').doc(token.id).set(token.data, {merge: true});
+      await setDoc(doc(collection(db, 'tokens'), token.id), token.data, {merge: true});
     } catch (err) {
       errorStore.state.error = 'GitHub platform information not properly set up.';
     }

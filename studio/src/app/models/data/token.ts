@@ -1,5 +1,3 @@
-import firebase from 'firebase/app';
-
 export interface TokenGitHub {
   token: string;
 }
@@ -7,7 +5,7 @@ export interface TokenGitHub {
 export interface TokenData {
   github?: TokenGitHub;
 
-  updated_at?: firebase.firestore.Timestamp;
+  updated_at?;
 }
 
 export interface Token {

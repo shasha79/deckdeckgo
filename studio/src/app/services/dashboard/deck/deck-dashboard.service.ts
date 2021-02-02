@@ -1,9 +1,10 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import {onSnapshot} from 'firebase/firestore';
+import {DocumentSnapshot, doc, collection} from 'firebase/firestore/lite';
 
 import {Deck, DeckData} from '../../../models/data/deck';
 
 import {DeckService} from '../../data/deck/deck.service';
+import {db} from '../../../utils/editor/firestore.utils';
 
 export interface DeckDashboardCloneResult {
   from: Deck;
@@ -76,19 +77,15 @@ export class DeckDashboardService {
         return;
       }
 
-      const firestore: firebase.firestore.Firestore = firebase.firestore();
-      const unsubscribe = firestore
-        .collection('decks')
-        .doc(deck.id)
-        .onSnapshot((deckSnapshot: firebase.firestore.DocumentSnapshot<DeckData>) => {
-          updateFunction(
-            {
-              id: deckSnapshot.id,
-              data: deckSnapshot.data(),
-            },
-            unsubscribe
-          );
-        });
+      const unsubscribe = onSnapshot(doc(collection(db, 'decks'), 'deck.id'), (deckSnapshot: DocumentSnapshot<DeckData>) => {
+        updateFunction(
+          {
+            id: deckSnapshot.id,
+            data: deckSnapshot.data(),
+          },
+          unsubscribe
+        );
+      });
 
       resolve();
     });

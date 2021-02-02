@@ -9,8 +9,7 @@ import authStore from '../../../../stores/auth.store';
 
 import {cleanContent} from '@deckdeckgo/deck-utils';
 
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import {deleteField} from 'firebase/firestore';
 
 import {Deck, DeckAttributes, DeckData} from '../../../../models/data/deck';
 import {
@@ -355,7 +354,7 @@ export class DeckEventsHandler {
         const attributes: DeckAttributes = await this.getDeckAttributes(deck, true, currentDeck);
 
         // @ts-ignore
-        currentDeck.data.attributes = attributes && Object.keys(attributes).length > 0 ? attributes : firebase.firestore.FieldValue.delete();
+        currentDeck.data.attributes = attributes && Object.keys(attributes).length > 0 ? attributes : deleteField();
 
         const slotsPromises: Promise<string>[] = ['background', 'header', 'footer'].map((slotName: 'background' | 'header' | 'footer') => {
           return this.getDeckSlot(deck, slotName);
@@ -363,13 +362,13 @@ export class DeckEventsHandler {
         const [background, header, footer] = await Promise.all(slotsPromises);
 
         // @ts-ignore
-        currentDeck.data.background = background && background !== undefined && background !== '' ? background : firebase.firestore.FieldValue.delete();
+        currentDeck.data.background = background && background !== undefined && background !== '' ? background : deleteField();
 
         // @ts-ignore
-        currentDeck.data.header = header && header !== undefined && header !== '' ? header : firebase.firestore.FieldValue.delete();
+        currentDeck.data.header = header && header !== undefined && header !== '' ? header : deleteField();
 
         // @ts-ignore
-        currentDeck.data.footer = footer && footer !== undefined && footer !== '' ? footer : firebase.firestore.FieldValue.delete();
+        currentDeck.data.footer = footer && footer !== undefined && footer !== '' ? footer : deleteField();
 
         const updatedDeck: Deck = await this.deckService.update(currentDeck);
 
@@ -483,7 +482,7 @@ export class DeckEventsHandler {
           slideUpdate.data.content = content;
         } else {
           // @ts-ignore
-          slideUpdate.data.content = firebase.firestore.FieldValue.delete();
+          slideUpdate.data.content = deleteField();
         }
 
         const attributes: SlideAttributes = await this.getSlideAttributes(slide, true);
@@ -600,7 +599,7 @@ export class DeckEventsHandler {
       attributes.style = slide.getAttribute('style');
     } else if (cleanFields) {
       // @ts-ignore
-      attributes.style = firebase.firestore.FieldValue.delete();
+      attributes.style = deleteField();
     }
 
     if ((slide as any).src) {
@@ -611,14 +610,14 @@ export class DeckEventsHandler {
       attributes.customBackground = '' + true;
     } else if (cleanFields) {
       // @ts-ignore
-      attributes.customBackground = firebase.firestore.FieldValue.delete();
+      attributes.customBackground = deleteField();
     }
 
     if ((slide as any).imgSrc) {
       attributes.imgSrc = (slide as any).imgSrc;
     } else if (cleanFields) {
       // @ts-ignore
-      attributes.imgSrc = firebase.firestore.FieldValue.delete();
+      attributes.imgSrc = deleteField();
     }
 
     if ((slide as any).imgAlt) {
@@ -645,7 +644,7 @@ export class DeckEventsHandler {
       attributes.vertical = true;
     } else if (cleanFields) {
       // @ts-ignore
-      attributes.vertical = firebase.firestore.FieldValue.delete();
+      attributes.vertical = deleteField();
     }
 
     // We only want to persist the currently specific 'demo' type, not the default one
@@ -667,7 +666,7 @@ export class DeckEventsHandler {
       attributes.imgMode = slide.getAttribute('img-mode');
     } else if (cleanFields) {
       // @ts-ignore
-      attributes.imgMode = firebase.firestore.FieldValue.delete();
+      attributes.imgMode = deleteField();
     }
 
     return attributes;
@@ -684,7 +683,7 @@ export class DeckEventsHandler {
       attributes.theme = slide.getAttribute('theme');
     } else if (cleanFields) {
       // @ts-ignore
-      attributes.theme = firebase.firestore.FieldValue.delete();
+      attributes.theme = deleteField();
     }
 
     return attributes;
@@ -702,9 +701,9 @@ export class DeckEventsHandler {
       attributes.content = (slide as any).content;
     } else if (cleanFields) {
       // @ts-ignore
-      attributes.customQRCode = firebase.firestore.FieldValue.delete();
+      attributes.customQRCode = deleteField();
       // @ts-ignore
-      attributes.content = firebase.firestore.FieldValue.delete();
+      attributes.content = deleteField();
     }
 
     return attributes;
@@ -721,7 +720,7 @@ export class DeckEventsHandler {
       attributes.innerRadius = parseInt(slide.getAttribute('inner-radius'));
     } else if (cleanFields) {
       // @ts-ignore
-      attributes.innerRadius = firebase.firestore.FieldValue.delete();
+      attributes.innerRadius = deleteField();
     }
 
     if (slide.hasAttribute('type')) {
@@ -736,49 +735,49 @@ export class DeckEventsHandler {
       attributes.datePattern = slide.getAttribute('date-pattern');
     } else if (cleanFields) {
       // @ts-ignore
-      attributes.datePattern = firebase.firestore.FieldValue.delete();
+      attributes.datePattern = deleteField();
     }
 
     if (slide.hasAttribute('y-axis-domain')) {
       attributes.yAxisDomain = slide.getAttribute('y-axis-domain') as SlideAttributesYAxisDomain;
     } else if (cleanFields) {
       // @ts-ignore
-      attributes.yAxisDomain = firebase.firestore.FieldValue.delete();
+      attributes.yAxisDomain = deleteField();
     }
 
     if (slide.getAttribute('smooth') === 'false') {
       attributes.smooth = false;
     } else if (cleanFields) {
       // @ts-ignore
-      attributes.smooth = firebase.firestore.FieldValue.delete();
+      attributes.smooth = deleteField();
     }
 
     if (slide.getAttribute('area') === 'false') {
       attributes.area = false;
     } else if (cleanFields) {
       // @ts-ignore
-      attributes.area = firebase.firestore.FieldValue.delete();
+      attributes.area = deleteField();
     }
 
     if (slide.hasAttribute('ticks')) {
       attributes.ticks = parseInt(slide.getAttribute('ticks'));
     } else if (cleanFields) {
       // @ts-ignore
-      attributes.ticks = firebase.firestore.FieldValue.delete();
+      attributes.ticks = deleteField();
     }
 
     if (slide.getAttribute('grid') === 'true') {
       attributes.grid = true;
     } else if (cleanFields) {
       // @ts-ignore
-      attributes.grid = firebase.firestore.FieldValue.delete();
+      attributes.grid = deleteField();
     }
 
     if (slide.hasAttribute('separator')) {
       attributes.separator = slide.getAttribute('separator');
     } else if (cleanFields) {
       // @ts-ignore
-      attributes.separator = firebase.firestore.FieldValue.delete();
+      attributes.separator = deleteField();
     }
 
     return attributes;
@@ -791,28 +790,28 @@ export class DeckEventsHandler {
       attributes.style = deck.getAttribute('style');
     } else if (updateDeck) {
       // @ts-ignore
-      attributes.style = firebase.firestore.FieldValue.delete();
+      attributes.style = deleteField();
     }
 
     if (deck.hasAttribute('animation') && deck.getAttribute('animation') !== 'slide') {
       attributes.animation = deck.getAttribute('animation') as 'slide' | 'fade' | 'none';
     } else if (updateDeck) {
       // @ts-ignore
-      attributes.animation = firebase.firestore.FieldValue.delete();
+      attributes.animation = deleteField();
     }
 
     if (deck.hasAttribute('direction') && deck.getAttribute('direction') !== 'horizontal') {
       attributes.direction = deck.getAttribute('direction') as 'horizontal' | 'vertical' | 'papyrus';
     } else if (updateDeck) {
       // @ts-ignore
-      attributes.direction = firebase.firestore.FieldValue.delete();
+      attributes.direction = deleteField();
     }
 
     if (deck.hasAttribute('direction-mobile') && deck.getAttribute('direction-mobile') !== 'papyrus') {
       attributes.directionMobile = deck.getAttribute('direction-mobile') as 'horizontal' | 'vertical' | 'papyrus';
     } else if (updateDeck) {
       // @ts-ignore
-      attributes.directionMobile = firebase.firestore.FieldValue.delete();
+      attributes.directionMobile = deleteField();
     }
 
     if (currentDeck && currentDeck.data && currentDeck.data.attributes) {
@@ -820,7 +819,7 @@ export class DeckEventsHandler {
         attributes.autoSlide = currentDeck.data.attributes.autoSlide;
       } else {
         // @ts-ignore
-        attributes.autoSlide = firebase.firestore.FieldValue.delete();
+        attributes.autoSlide = deleteField();
       }
     }
 

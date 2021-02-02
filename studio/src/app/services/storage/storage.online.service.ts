@@ -1,12 +1,10 @@
-import firebase from '@firebase/app';
-import '@firebase/storage';
-
-import {Reference, ListResult, ListOptions} from '@firebase/storage-types';
+import {uploadBytesResumable, ref, getDownloadURL, list, ListResult, ListOptions, StorageReference} from 'firebase/storage';
 
 import errorStore from '../../stores/error.store';
 import authStore from '../../stores/auth.store';
 
 import {Constants} from '../../types/core/constants';
+import {storage} from '../../utils/editor/firestore.utils';
 
 export class StorageOnlineService {
   private static instance: StorageOnlineService;
@@ -18,39 +16,39 @@ export class StorageOnlineService {
     return StorageOnlineService.instance;
   }
 
-  uploadFile(data: File, folder: string, maxSize: number): Promise<StorageFile> {
+  uploadFile(data: File, folder: string, maxSize: number): Promise<StorageFile | null> {
     return new Promise<StorageFile>(async (resolve) => {
       try {
         if (!authStore.state.authUser || !authStore.state.authUser.uid || authStore.state.authUser.uid === '' || authStore.state.authUser.uid === undefined) {
           errorStore.state.error = 'Not logged in.';
-          resolve();
+          resolve(null);
           return;
         }
 
         if (!data || !data.name) {
           errorStore.state.error = 'File not valid.';
-          resolve();
+          resolve(null);
           return;
         }
 
         if (data.size > maxSize) {
           errorStore.state.error = `File is too big (max. ${maxSize / 1048576} Mb)`;
-          resolve();
+          resolve(null);
           return;
         }
 
-        const ref: Reference = firebase.storage().ref(`${authStore.state.authUser.uid}/assets/${folder}/${data.name}`);
+        const imageRef: StorageReference = ref(storage, `${authStore.state.authUser.uid}/assets/${folder}/${data.name}`);
 
-        await ref.put(data);
+        const snapshot = await uploadBytesResumable(imageRef, data);
 
         resolve({
-          downloadUrl: await ref.getDownloadURL(),
-          fullPath: ref.fullPath,
+          downloadUrl: await getDownloadURL(snapshot.ref),
+          fullPath: imageRef.fullPath,
           name: ref.name,
         });
       } catch (err) {
         errorStore.state.error = err.message;
-        resolve();
+        resolve(null);
       }
     });
   }
@@ -64,7 +62,7 @@ export class StorageOnlineService {
           return;
         }
 
-        const ref = firebase.storage().ref(`${authStore.state.authUser.uid}/assets/${folder}/`);
+        const filesRef: StorageReference = ref(storage, `${authStore.state.authUser.uid}/assets/${folder}/`);
 
         let options: ListOptions = {
           maxResults: Constants.STORAGE.MAX_QUERY_RESULTS,
@@ -74,7 +72,7 @@ export class StorageOnlineService {
           options.pageToken = next;
         }
 
-        const results: ListResult = await ref.list(options);
+        const results: ListResult = await list(filesRef, options);
 
         resolve(this.toStorageFileList(results));
       } catch (err) {
@@ -103,10 +101,10 @@ export class StorageOnlineService {
     });
   }
 
-  private toStorageFile(ref: Reference): Promise<StorageFile> {
+  private toStorageFile(ref: StorageReference): Promise<StorageFile> {
     return new Promise<StorageFile>(async (resolve) => {
       resolve({
-        downloadUrl: await ref.getDownloadURL(),
+        downloadUrl: await getDownloadURL(ref),
         fullPath: ref.fullPath,
         name: ref.name,
       });

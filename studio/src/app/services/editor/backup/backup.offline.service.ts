@@ -1,5 +1,3 @@
-import firebase from 'firebase/app';
-
 import {get} from 'idb-keyval';
 
 import deckStore from '../../../stores/deck.store';
@@ -23,8 +21,8 @@ interface DeckBackupData {
 
   api_id?: string;
 
-  created_at?: firebase.firestore.Timestamp;
-  updated_at?: firebase.firestore.Timestamp;
+  created_at?;
+  updated_at?;
 }
 
 interface DeckBackup {

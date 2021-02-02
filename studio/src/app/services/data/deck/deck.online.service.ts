@@ -1,8 +1,7 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import {DocumentSnapshot, doc, getDoc, setDoc, collection, serverTimestamp} from 'firebase/firestore/lite';
 
 import {Deck, DeckData} from '../../../models/data/deck';
-import {FirestoreUtils} from '../../../utils/editor/firestore.utils';
+import {db, FirestoreUtils} from '../../../utils/editor/firestore.utils';
 
 export class DeckOnlineService {
   private static instance: DeckOnlineService;
@@ -20,10 +19,8 @@ export class DeckOnlineService {
 
   get(deckId: string): Promise<Deck> {
     return new Promise<Deck>(async (resolve, reject) => {
-      const firestore: firebase.firestore.Firestore = firebase.firestore();
-
       try {
-        const snapshot: firebase.firestore.DocumentSnapshot = await firestore.collection('decks').doc(deckId).get();
+        const snapshot: DocumentSnapshot = await getDoc(doc(collection(db, 'decks'), deckId));
 
         if (!snapshot.exists) {
           reject('Deck not found');
@@ -44,13 +41,11 @@ export class DeckOnlineService {
 
   update(deck: Deck): Promise<Deck> {
     return new Promise<Deck>(async (resolve, reject) => {
-      const firestore: firebase.firestore.Firestore = firebase.firestore();
-
-      const now: firebase.firestore.Timestamp = firebase.firestore.Timestamp.now();
+      const now = serverTimestamp();
       deck.data.updated_at = now;
 
       try {
-        await firestore.collection('decks').doc(deck.id).set(deck.data, {merge: true});
+        await setDoc(doc(collection(db, 'decks'), deck.id), deck.data, {merge: true});
 
         resolve(FirestoreUtils.filterDelete(deck));
       } catch (err) {

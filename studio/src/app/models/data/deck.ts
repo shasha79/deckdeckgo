@@ -1,10 +1,10 @@
-import firebase from 'firebase/app';
+import {FieldValue} from 'firebase/firestore';
 
 import {UserSocial} from './user';
 
 export interface DeckDeployData {
   status: 'scheduled' | 'failure' | 'successful';
-  updated_at: firebase.firestore.Timestamp;
+  updated_at;
 }
 
 export interface DeckDeploy {
@@ -27,25 +27,25 @@ export interface DeckGitHub {
 export interface DeckMetaAuthor {
   name: string;
   photo_url?: string;
-  social?: UserSocial | firebase.firestore.FieldValue;
+  social?: UserSocial | FieldValue;
 }
 
 export interface DeckMeta {
   title: string;
 
-  description?: string | firebase.firestore.FieldValue;
-  tags?: string[] | firebase.firestore.FieldValue;
+  description?: string | FieldValue;
+  tags?: string[] | FieldValue;
 
   pathname?: string;
 
-  author?: DeckMetaAuthor | firebase.firestore.FieldValue;
+  author?: DeckMetaAuthor | FieldValue;
 
   published?: boolean;
-  published_at?: firebase.firestore.Timestamp;
+  published_at?;
 
   feed?: boolean;
 
-  updated_at: firebase.firestore.Timestamp;
+  updated_at;
 }
 
 export interface DeckAttributes {
@@ -83,8 +83,8 @@ export interface DeckData {
 
   clone?: DeckClone;
 
-  created_at?: firebase.firestore.Timestamp;
-  updated_at?: firebase.firestore.Timestamp;
+  created_at?;
+  updated_at?;
 }
 
 export interface Deck {

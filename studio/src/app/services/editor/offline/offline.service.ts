@@ -1,4 +1,4 @@
-import firebase from 'firebase/app';
+import {deleteField} from 'firebase/firestore';
 
 import {del, get, set} from 'idb-keyval';
 
@@ -637,7 +637,7 @@ export class OfflineService {
 
         if (slide.data.content === null) {
           // @ts-ignore
-          slide.data.content = firebase.firestore.FieldValue.delete();
+          slide.data.content = deleteField();
         }
 
         await this.slideOnlineService.update(deck.id, slide);
@@ -673,17 +673,17 @@ export class OfflineService {
 
         if (deck.data.background === null) {
           // @ts-ignore
-          deck.data.background = firebase.firestore.FieldValue.delete();
+          deck.data.background = deleteField();
         }
 
         if (deck.data.header === null) {
           // @ts-ignore
-          deck.data.header = firebase.firestore.FieldValue.delete();
+          deck.data.header = deleteField();
         }
 
         if (deck.data.footer === null) {
           // @ts-ignore
-          deck.data.footer = firebase.firestore.FieldValue.delete();
+          deck.data.footer = deleteField();
         }
 
         const persistedDeck: Deck = await this.deckOnlineService.update(deck);

@@ -1,8 +1,6 @@
 import {Component, Listen, State, h, Element} from '@stencil/core';
 import {loadingController, modalController, OverlayEventDetail} from '@ionic/core';
 
-import firebase from '@firebase/app';
-import '@firebase/auth';
 import {User as FirebaseUser} from '@firebase/auth-types';
 
 import errorStore from '../../../../stores/error.store';
@@ -25,6 +23,7 @@ import {ApiUserFactoryService} from '../../../../services/api/user/api.user.fact
 
 import {EnvironmentDeckDeckGoConfig} from '../../../../types/core/environment-config';
 import {EnvironmentConfigService} from '../../../../services/core/environment/environment-config.service';
+import {auth} from '../../../../utils/editor/firestore.utils';
 
 @Component({
   tag: 'app-profile',
@@ -293,7 +292,7 @@ export class AppProfile {
       this.apiUser.username = this.apiUsername;
 
       try {
-        const token: string = await firebase.auth().currentUser.getIdToken();
+        const token: string = await auth.currentUser.getIdToken();
 
         await this.apiUserService.put(this.apiUser, token, this.apiUser.id);
 
@@ -317,7 +316,7 @@ export class AppProfile {
       }
 
       try {
-        const storageFile: StorageFile = await this.storageService.uploadFile(this.profilePicture, 'avatars', 524288);
+        const storageFile: StorageFile | null = await this.storageService.uploadFile(this.profilePicture, 'avatars', 524288);
 
         if (storageFile) {
           this.user.data.photo_url = storageFile.downloadUrl;
@@ -348,7 +347,7 @@ export class AppProfile {
       }
 
       try {
-        const storageFile: StorageFile = await this.storageService.uploadFile(this.customLogo, 'images', 524288);
+        const storageFile: StorageFile | null = await this.storageService.uploadFile(this.customLogo, 'images', 524288);
 
         if (storageFile) {
           this.user.data.social.custom_logo_url = storageFile.downloadUrl;
@@ -385,11 +384,11 @@ export class AppProfile {
 
         await loading.present();
 
-        const firebaseUser: FirebaseUser = firebase.auth().currentUser;
+        const firebaseUser: FirebaseUser = auth.currentUser;
 
         if (firebaseUser) {
           // We need the user token to access the API, therefore delete it here first
-          const token: string = await firebase.auth().currentUser.getIdToken();
+          const token: string = await auth.currentUser.getIdToken();
           await this.apiUserService.delete(this.apiUser.id, token);
 
           // Then delete the user
