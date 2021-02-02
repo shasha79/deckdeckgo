@@ -4,7 +4,7 @@ import store from '../../../stores/user.store';
 
 import {AuthUser} from '../../../models/auth/auth.user';
 import {User, UserData} from '../../../models/data/user';
-import {db} from '../../../utils/editor/firestore.utils';
+import {dbLite} from '../../../utils/editor/firestore.utils';
 
 export class UserService {
   private static instance: UserService;
@@ -28,7 +28,7 @@ export class UserService {
       }
 
       try {
-        const snapshot: DocumentSnapshot = await getDoc(doc(collection(db, 'users'), authUser.uid));
+        const snapshot: DocumentSnapshot = await getDoc(doc(collection(dbLite, 'users'), authUser.uid));
 
         if (!snapshot.exists) {
           const user: User = await this.createUser(authUser);
@@ -77,7 +77,7 @@ export class UserService {
           user.photo_url = authUser.photo_url;
         }
 
-        await setDoc(doc(collection(db, 'users'), authUser.uid), user, {merge: true});
+        await setDoc(doc(collection(dbLite, 'users'), authUser.uid), user, {merge: true});
 
         resolve({
           id: authUser.uid,
@@ -111,7 +111,7 @@ export class UserService {
 
           user.updated_at = serverTimestamp();
 
-          await setDoc(doc(collection(db, 'users'), authUser.uid), user, {merge: true});
+          await setDoc(doc(collection(dbLite, 'users'), authUser.uid), user, {merge: true});
         }
 
         resolve(user);
@@ -141,7 +141,7 @@ export class UserService {
       user.data.updated_at = now;
 
       try {
-        await setDoc(doc(collection(db, 'users'), user.id), user.data, {merge: true});
+        await setDoc(doc(collection(dbLite, 'users'), user.id), user.data, {merge: true});
 
         store.state.user = {...user};
 
@@ -155,7 +155,7 @@ export class UserService {
   delete(userId: string): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        await deleteDoc(doc(collection(db, 'users'), userId));
+        await deleteDoc(doc(collection(dbLite, 'users'), userId));
 
         store.reset();
 

@@ -17,8 +17,8 @@ import {Deck, DeckData} from '../../../models/data/deck';
 import {DeckOfflineService} from './deck.offline.service';
 import {DeckOnlineService} from './deck.online.service';
 import {OfflineService} from '../../editor/offline/offline.service';
-import {db} from '../../../utils/editor/firestore.utils';
 import {doc} from 'firebase/firestore/lite';
+import {dbLite} from '../../../utils/editor/firestore.utils';
 
 export class DeckService {
   private static instance: DeckService;
@@ -41,7 +41,7 @@ export class DeckService {
       deck.updated_at = now;
 
       try {
-        const doc: DocumentReference = await addDoc(collection(db, 'decks'), deck);
+        const doc: DocumentReference = await addDoc(collection(dbLite, 'decks'), deck);
 
         resolve({
           id: doc.id,
@@ -76,7 +76,7 @@ export class DeckService {
   getUserDecks(userId: string): Promise<Deck[]> {
     return new Promise<Deck[]>(async (resolve, reject) => {
       try {
-        const snapshot: QuerySnapshot = await getDocs(query(collection(db, 'decks'), where('owner_id', '==', userId), orderBy('updated_at', 'desc')));
+        const snapshot: QuerySnapshot = await getDocs(query(collection(dbLite, 'decks'), where('owner_id', '==', userId), orderBy('updated_at', 'desc')));
 
         const decks: Deck[] = snapshot.docs.map((documentSnapshot: QueryDocumentSnapshot) => {
           return {
@@ -121,7 +121,7 @@ export class DeckService {
   delete(deckId: string): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        await deleteDoc(doc(collection(db, 'decks'), deckId));
+        await deleteDoc(doc(collection(dbLite, 'decks'), deckId));
 
         resolve();
       } catch (err) {

@@ -1,14 +1,17 @@
 import {initializeApp} from 'firebase/app';
-import {deleteField} from 'firebase/firestore';
-import {getFirestore} from 'firebase/firestore/lite';
+import {deleteField, getFirestore} from 'firebase/firestore';
+import {getFirestore as getFirestoreLite} from 'firebase/firestore/lite';
 import {getStorage} from 'firebase/storage';
 import {getAuth} from 'firebase/auth';
 
 import {EnvironmentConfigService} from '../../services/core/environment/environment-config.service';
 
+// TODO: Move to a clean store
 const firebaseApp = initializeApp(EnvironmentConfigService.getInstance().get('firebase'));
+
 export const auth = getAuth(firebaseApp);
 export const db = getFirestore(firebaseApp);
+export const dbLite = getFirestoreLite(firebaseApp);
 export const storage = getStorage(firebaseApp);
 
 export class FirestoreUtils {

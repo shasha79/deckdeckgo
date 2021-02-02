@@ -4,7 +4,7 @@ import {DocumentSnapshot, doc, collection} from 'firebase/firestore/lite';
 import {Deck, DeckData} from '../../../models/data/deck';
 
 import {DeckService} from '../../data/deck/deck.service';
-import {db} from '../../../utils/editor/firestore.utils';
+import {dbLite} from '../../../utils/editor/firestore.utils';
 
 export interface DeckDashboardCloneResult {
   from: Deck;
@@ -77,7 +77,7 @@ export class DeckDashboardService {
         return;
       }
 
-      const unsubscribe = onSnapshot(doc(collection(db, 'decks'), 'deck.id'), (deckSnapshot: DocumentSnapshot<DeckData>) => {
+      const unsubscribe = onSnapshot(doc(collection(dbLite, 'decks'), 'deck.id'), (deckSnapshot: DocumentSnapshot<DeckData>) => {
         updateFunction(
           {
             id: deckSnapshot.id,

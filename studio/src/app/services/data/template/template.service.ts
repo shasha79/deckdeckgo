@@ -17,7 +17,7 @@ import templatesStore from '../../../stores/templates.store';
 import authStore from '../../../stores/auth.store';
 
 import {Template, TemplateData} from '../../../models/data/template';
-import {db} from '../../../utils/editor/firestore.utils';
+import {dbLite} from '../../../utils/editor/firestore.utils';
 
 export class TemplateService {
   private static instance: TemplateService;
@@ -60,7 +60,7 @@ export class TemplateService {
       try {
         const userId: string = authStore.state.authUser.uid;
 
-        const snapshot: QuerySnapshot = await getDocs(query(collection(db, 'templates'), where('owner_id', '==', userId), orderBy('updated_at', 'desc')));
+        const snapshot: QuerySnapshot = await getDocs(query(collection(dbLite, 'templates'), where('owner_id', '==', userId), orderBy('updated_at', 'desc')));
 
         const templates: Template[] = snapshot.docs.map((documentSnapshot: QueryDocumentSnapshot) => {
           return {
@@ -83,7 +83,7 @@ export class TemplateService {
       templateData.updated_at = now;
 
       try {
-        const doc: DocumentReference = await addDoc(collection(db, 'templates'), templateData);
+        const doc: DocumentReference = await addDoc(collection(dbLite, 'templates'), templateData);
 
         resolve({
           id: doc.id,
@@ -101,7 +101,7 @@ export class TemplateService {
       template.data.updated_at = now;
 
       try {
-        await setDoc(doc(collection(db, 'templates'), template.id), template.data, {merge: true});
+        await setDoc(doc(collection(dbLite, 'templates'), template.id), template.data, {merge: true});
 
         resolve(template);
       } catch (err) {

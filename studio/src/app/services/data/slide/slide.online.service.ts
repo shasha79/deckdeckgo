@@ -1,7 +1,7 @@
 import {DocumentReference, addDoc, collection, serverTimestamp, deleteDoc, DocumentSnapshot, getDoc, doc, setDoc} from 'firebase/firestore/lite';
 
 import {Slide, SlideData} from '../../../models/data/slide';
-import {db} from '../../../utils/editor/firestore.utils';
+import {dbLite} from '../../../utils/editor/firestore.utils';
 
 export class SlideOnlineService {
   private static instance: SlideOnlineService;
@@ -24,7 +24,7 @@ export class SlideOnlineService {
       slide.updated_at = now;
 
       try {
-        const doc: DocumentReference = await addDoc(collection(db, `/decks/${deckId}/slides`), slide);
+        const doc: DocumentReference = await addDoc(collection(dbLite, `/decks/${deckId}/slides`), slide);
 
         resolve({
           id: doc.id,
@@ -39,7 +39,7 @@ export class SlideOnlineService {
   get(deckId: string, slideId: string): Promise<Slide> {
     return new Promise<Slide>(async (resolve, reject) => {
       try {
-        const snapshot: DocumentSnapshot = await getDoc(doc(collection(db, `/decks/${deckId}/slides`), slideId));
+        const snapshot: DocumentSnapshot = await getDoc(doc(collection(dbLite, `/decks/${deckId}/slides`), slideId));
 
         if (!snapshot.exists) {
           reject('Slide not found');
@@ -64,7 +64,7 @@ export class SlideOnlineService {
       slide.data.updated_at = now;
 
       try {
-        await setDoc(doc(collection(db, `/decks/${deckId}/slides`), slide.id), slide.data, {merge: true});
+        await setDoc(doc(collection(dbLite, `/decks/${deckId}/slides`), slide.id), slide.data, {merge: true});
 
         resolve();
       } catch (err) {
@@ -76,7 +76,7 @@ export class SlideOnlineService {
   delete(deckId: string, slideId: string): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        await deleteDoc(doc(collection(db, `/decks/${deckId}/slides`), slideId));
+        await deleteDoc(doc(collection(dbLite, `/decks/${deckId}/slides`), slideId));
 
         resolve();
       } catch (err) {
