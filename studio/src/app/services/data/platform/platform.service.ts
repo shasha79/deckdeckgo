@@ -1,9 +1,9 @@
 import {serverTimestamp} from 'firebase/firestore/lite';
+import {collection, doc, setDoc} from 'firebase/firestore/lite';
 
 import errorStore from '../../../stores/error.store';
 
 import {Token} from '../../../models/data/token';
-import {collection, doc, setDoc} from 'firebase/firestore/lite';
 import {dbLite} from '../../../utils/editor/firestore.utils';
 
 export class PlatformService {
