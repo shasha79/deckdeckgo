@@ -30,7 +30,7 @@ export class UserService {
       try {
         const snapshot: DocumentSnapshot = await getDoc(doc(collection(dbLite, 'users'), authUser.uid));
 
-        if (!snapshot.exists) {
+        if (!snapshot.exists()) {
           const user: User = await this.createUser(authUser);
 
           store.state.user = {...user};

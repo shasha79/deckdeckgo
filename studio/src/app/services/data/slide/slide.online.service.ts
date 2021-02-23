@@ -41,7 +41,7 @@ export class SlideOnlineService {
       try {
         const snapshot: DocumentSnapshot = await getDoc(doc(collection(dbLite, `/decks/${deckId}/slides`), slideId));
 
-        if (!snapshot.exists) {
+        if (!snapshot.exists()) {
           reject('Slide not found');
           return;
         }

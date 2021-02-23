@@ -22,7 +22,7 @@ export class DeckOnlineService {
       try {
         const snapshot: DocumentSnapshot = await getDoc(doc(collection(dbLite, 'decks'), deckId));
 
-        if (!snapshot.exists) {
+        if (!snapshot.exists()) {
           reject('Deck not found');
           return;
         }
