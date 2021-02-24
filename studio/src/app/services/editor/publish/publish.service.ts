@@ -1,4 +1,5 @@
-import {deleteField, serverTimestamp, collection, doc, onSnapshot, DocumentSnapshot} from 'firebase/firestore';
+import {collection, doc, onSnapshot, DocumentSnapshot} from 'firebase/firestore';
+import {deleteField, serverTimestamp} from 'firebase/firestore/lite';
 
 import deckStore from '../../../stores/deck.store';
 import userStore from '../../../stores/user.store';

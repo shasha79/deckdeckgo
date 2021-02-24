@@ -9,7 +9,7 @@ import authStore from '../../../../stores/auth.store';
 
 import {cleanContent} from '@deckdeckgo/deck-utils';
 
-import {deleteField} from 'firebase/firestore';
+import {deleteField} from 'firebase/firestore/lite';
 
 import {Deck, DeckAttributes, DeckData} from '../../../../models/data/deck';
 import {

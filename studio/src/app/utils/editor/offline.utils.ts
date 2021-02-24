@@ -1,4 +1,4 @@
-import {deleteField} from 'firebase/firestore';
+import {deleteField} from 'firebase/firestore/lite';
 
 import {SlideAttributes} from '../../models/data/slide';
 import {DeckAttributes} from '../../models/data/deck';

@@ -1,4 +1,4 @@
-import {deleteField} from 'firebase/firestore';
+import {deleteField} from 'firebase/firestore/lite';
 
 import {del, get, set} from 'idb-keyval';
 

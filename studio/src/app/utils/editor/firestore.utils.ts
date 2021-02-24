@@ -1,6 +1,6 @@
 import {initializeApp} from 'firebase/app';
-import {deleteField, getFirestore} from 'firebase/firestore';
-import {getFirestore as getFirestoreLite} from 'firebase/firestore/lite';
+import {getFirestore} from 'firebase/firestore';
+import {getFirestore as getFirestoreLite, deleteField} from 'firebase/firestore/lite';
 import {getStorage} from 'firebase/storage';
 import {getAuth} from 'firebase/auth';
 
