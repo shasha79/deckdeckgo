@@ -1,6 +1,7 @@
 import {Component, Event, EventEmitter, h, State} from '@stencil/core';
 
 import {debounce} from '@deckdeckgo/utils';
+import {isSlide} from '@deckdeckgo/deck-utils';
 
 import deckStore from '../../../../stores/deck.store';
 import errorStore from '../../../../stores/error.store';
@@ -113,7 +114,7 @@ export class AppPublishEdit {
 
       const slide: HTMLElement = document.querySelector('app-editor main deckgo-deck > *:first-child');
 
-      if (slide?.tagName?.toLowerCase().indexOf('deckgo-slide') > -1) {
+      if (isSlide(slide)) {
         const contentElement: HTMLElement = slide.querySelector('[slot="content"]');
 
         if (contentElement) {

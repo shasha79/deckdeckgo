@@ -11,7 +11,7 @@ import colorStore from '../../../stores/color.store';
 
 import {debounce, isAndroidTablet, isFullscreen, isIOS, isIPad, isMobile} from '@deckdeckgo/utils';
 
-import {convertStyle} from '@deckdeckgo/deck-utils';
+import {convertStyle, isSlide} from '@deckdeckgo/deck-utils';
 
 import {AuthUser} from '../../../models/auth/auth.user';
 import {SlideTemplate} from '../../../models/data/slide';
@@ -33,11 +33,11 @@ import {signIn as navigateSignIn} from '../../../utils/core/signin.utils';
 
 import {AuthService} from '../../../services/auth/auth.service';
 import {AnonymousService} from '../../../services/editor/anonymous/anonymous.service';
-
-import {EnvironmentGoogleConfig} from '../../../types/core/environment-config';
 import {EnvironmentConfigService} from '../../../services/core/environment/environment-config.service';
 import {OfflineService} from '../../../services/editor/offline/offline.service';
 import {FontsService} from '../../../services/editor/fonts/fonts.service';
+
+import {EnvironmentGoogleConfig} from '../../../types/core/environment-config';
 
 @Component({
   tag: 'app-editor',
@@ -427,7 +427,7 @@ export class AppEditor {
 
       const selectedElement: HTMLElement = $event.detail;
 
-      if (!selectedElement.nodeName || selectedElement.nodeName.toLowerCase().indexOf('deckgo-slide') >= 0) {
+      if (isSlide(selectedElement)) {
         resolve();
         return;
       }

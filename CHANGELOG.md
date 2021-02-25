@@ -1,6 +1,22 @@
+<a name="4.3.0"></a>
+
+# [4.3.0](https://github.com/deckgo/deckdeckgo/compare/v4.2.0...v4.3.0) (In progress...)
+
+### Web Components
+
+- core: v8.1.3 ([CHANGELOG](https://github.com/deckgo/deckdeckgo/blob/master/webcomponents/core/CHANGELOG.md))
+- highlight-code: v2.4.0 ([CHANGELOG](https://github.com/deckgo/deckdeckgo/blob/master/webcomponents/highlight-code/CHANGELOG.md))
+
+### Others
+
+- deck-utils: v3.4.0 ([CHANGELOG](https://github.com/deckgo/deckdeckgo/blob/master/utils/deck/CHANGELOG.md))
+- kit: v2.1.0 ([CHANGELOG](https://github.com/deckgo/deckdeckgo/blob/master/kit/CHANGELOG.md))
+- starter kit: v7.1.5 ([CHANGELOG](https://github.com/deckgo/starter-kit/blob/master/CHANGELOG.md))
+- studio kit: v7.2.1 ([CHANGELOG](https://github.com/deckgo/studio-kit/blob/master/CHANGELOG.md))
+
 <a name="4.2.0"></a>
 
-# [4.2.0](https://github.com/deckgo/deckdeckgo/compare/v4.1.0...v4.2.0) (In progress...)
+# [4.2.0](https://github.com/deckgo/deckdeckgo/compare/v4.1.0...v4.2.0) (2020-02-14)
 
 ### Applications
 
@@ -12,15 +28,24 @@
 - core: v8.1.2 ([CHANGELOG](https://github.com/deckgo/deckdeckgo/blob/master/webcomponents/core/CHANGELOG.md))
 - highlight-code: v2.3.2 ([CHANGELOG](https://github.com/deckgo/deckdeckgo/blob/master/webcomponents/highlight-code/CHANGELOG.md))
 
+### Web Components: Templates
+
+- slide-content: v2.3.0 ([CHANGELOG](https://github.com/deckgo/deckdeckgo/blob/master/webcomponents/slides/content/CHANGELOG.md))
+
+### Others: New
+
+- template kit: v1.0.0 ([CHANGELOG](https://github.com/deckgo/template-kit/blob/master/CHANGELOG.md))
+
 ### Others
 
 - cli: v2.1.1 ([CHANGELOG](https://github.com/deckgo/deckdeckgo/blob/master/cli/CHANGELOG.md))
-- cloud: v2.0.0 ([CHANGELOG](https://github.com/deckgo/deckdeckgo/blob/master/cloud/CHANGELOG.md))
+- cloud: v2.1.0 ([CHANGELOG](https://github.com/deckgo/deckdeckgo/blob/master/cloud/CHANGELOG.md))
 - deck-utils: v3.3.1 ([CHANGELOG](https://github.com/deckgo/deckdeckgo/blob/master/utils/deck/CHANGELOG.md))
 - kit: v2.0.3 ([CHANGELOG](https://github.com/deckgo/deckdeckgo/blob/master/kit/CHANGELOG.md))
 - starter kit: v7.1.4 ([CHANGELOG](https://github.com/deckgo/starter-kit/blob/master/CHANGELOG.md))
 - studio kit: v7.2.0 ([CHANGELOG](https://github.com/deckgo/studio-kit/blob/master/CHANGELOG.md))
 - utils: v1.8.0 ([CHANGELOG](https://github.com/deckgo/deckdeckgo/blob/master/utils/utils/CHANGELOG.md))
+- infra: drop static-haskell-nix and update nixpkgs
 
 <a name="4.1.0"></a>
 

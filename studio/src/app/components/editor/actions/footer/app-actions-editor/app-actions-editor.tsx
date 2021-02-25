@@ -1,5 +1,7 @@
 import {Component, Element, Event, Watch, EventEmitter, Fragment, h, Host, JSX, Method, Prop, State, Listen} from '@stencil/core';
 
+import {isSlide} from '@deckdeckgo/deck-utils';
+
 import editorStore from '../../../../../stores/editor.store';
 
 import {BreadcrumbsStep} from '../../../../../types/editor/breadcrumbs-step';
@@ -66,7 +68,7 @@ export class AppActionsEditor {
 
     await this.actionsElementRef.touch(element, autoOpen);
 
-    editorStore.state.step = element && element.tagName.toLocaleLowerCase().indexOf('deckgo-slide-') > -1 ? BreadcrumbsStep.SLIDE : BreadcrumbsStep.ELEMENT;
+    editorStore.state.step = isSlide(element) ? BreadcrumbsStep.SLIDE : BreadcrumbsStep.ELEMENT;
   }
 
   @Method()

@@ -1,6 +1,11 @@
 import {Component, Element, Prop, State, h, EventEmitter, Event} from '@stencil/core';
+
+import {isSlide} from '@deckdeckgo/deck-utils';
+
 import settingsStore from '../../../../../stores/settings.store';
+
 import {EditMode, Expanded} from '../../../../../types/core/settings';
+
 import {SettingsUtils} from '../../../../../utils/core/settings.utils';
 
 enum ImageSize {
@@ -110,7 +115,7 @@ export class AppImageStyle {
     return new Promise<ImageAlignment>((resolve) => {
       const parent: HTMLElement = this.selectedElement.parentElement;
 
-      if (parent.nodeName?.toLowerCase().indexOf('deckgo-slide') > -1) {
+      if (isSlide(parent)) {
         const container: HTMLElement = parent.shadowRoot.querySelector('.deckgo-slide');
         if (container) {
           const style: CSSStyleDeclaration = window.getComputedStyle(container);

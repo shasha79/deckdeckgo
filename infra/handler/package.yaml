@@ -4,78 +4,81 @@ copyright: (c) 2019 David Dal Busco and Nicolas Mattia
 license: AGPL-3
 
 dependencies:
-    - aeson
-    - amazonka
-    - amazonka-cloudfront
-    - amazonka-core
-    - amazonka-s3
-    - amazonka-sqs
-    - base
-    - bytestring
-    - cases
-    - conduit
-    - conduit-extra
-    - contravariant
-    - cryptonite
-    - directory
-    - filepath
-    - firebase-login
-    - hasql
-    - http-client
-    - http-types
-    - lens
-    - memory
-    - mime-types
-    - mtl
-    - pureMD5
-    - random
-    - resourcet
-    - servant
-    - servant-server
-    - servant-swagger
-    - servant-swagger-ui
-    - swagger2
-    - tagsoup
-    - text
-    - time
-    - unliftio
-    - temporary
-    - unordered-containers
-    - wai
-    - wai-cors
-    - wai-lambda
-    - zip-archive
+  - aeson
+  - amazonka
+  - amazonka-cloudfront
+  - amazonka-core
+  - amazonka-s3
+  - amazonka-sqs
+  - base
+  - bytestring
+  - cases
+  - conduit
+  - conduit-extra
+  - contravariant
+  - cryptonite
+  - directory
+  - filepath
+  - firebase-login
+  - hasql
+  - http-client
+  - http-types
+  - lens
+  - memory
+  - mime-types
+  - mtl
+  - pureMD5
+  - random
+  - resourcet
+  - servant
+  - servant-server
+  - servant-swagger
+  - servant-swagger-ui
+  - swagger2
+  - tagsoup
+  - text
+  - time
+  - unliftio
+  - temporary
+  - unordered-containers
+  - wai
+  - wai-cors
+  - wai-lambda
+  - zip-archive
 
 ghc-options:
-    - -Wall
+  - -Wall
+  - -optl
+  - -Wl,--start-group
+  - -lssl
+  - -lcrypto
 
 library:
-    source-dirs: src
+  source-dirs: src
 
 executables:
+  # The AWS Lambda handler
+  handler:
+    main: app/Handler.hs
+    dependencies:
+      - deckdeckgo-handler
 
-    # The AWS Lambda handler
-    handler:
-        main: app/Handler.hs
-        dependencies:
-            - deckdeckgo-handler
+  # The API
+  dirty:
+    main: app/Dirty.hs
+    dependencies:
+      - warp
+      - deckdeckgo-handler
 
-    # The API
-    dirty:
-        main: app/Dirty.hs
-        dependencies:
-            - warp
-            - deckdeckgo-handler
-
-    test:
-        main: app/Test.hs
-        dependencies:
-            - deckdeckgo-handler
-            - http-client
-            - http-client-tls
-            - lens
-            - port-utils
-            - servant-client
-            - tasty
-            - tasty-hunit
-            - warp
+  test:
+    main: app/Test.hs
+    dependencies:
+      - deckdeckgo-handler
+      - http-client
+      - http-client-tls
+      - lens
+      - port-utils
+      - servant-client
+      - tasty
+      - tasty-hunit
+      - warp
