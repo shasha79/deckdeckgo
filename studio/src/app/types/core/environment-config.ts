@@ -19,6 +19,11 @@ export interface EnvironmentUnsplashConfig {
   url: string;
 }
 
+export interface EnvironmentHeritageConfig {
+  url: string;
+}
+
+
 export interface EnvironmentGoogleConfig {
   fontsUrl: string;
 }
@@ -39,6 +44,7 @@ export interface EnvironmentConfig {
   tenor: EnvironmentTenorConfig;
   unsplash: EnvironmentUnsplashConfig;
   google: EnvironmentGoogleConfig;
+  heritage: EnvironmentHeritageConfig;
 }
 
 export function setupConfig(config: EnvironmentConfig) {

@@ -69,6 +69,9 @@ setupDeckGoConfig({
   google: {
     fontsUrl: 'https://fonts.googleapis.com/css?display=swap&family=',
   },
+  heritage: {
+    url: "https://dj-story.jhn.ngo/api/v1/"
+  }
 });
 
 // IE9: https://stackoverflow.com/questions/5472938/does-ie9-support-console-log-and-is-it-a-real-function#answer-5473193

@@ -37,10 +37,10 @@ export class AppImage {
   private imageHistoryService: ImageHistoryService;
 
   @State()
-  private imagesHistoryOdd: (UnsplashPhoto | TenorGif | StorageFile | Waves)[];
+  private imagesHistoryOdd: (UnsplashPhoto | TenorGif | StorageFile | Waves | HeritageItem)[];
 
   @State()
-  private imagesHistoryEven: (UnsplashPhoto | TenorGif | StorageFile | Waves)[];
+  private imagesHistoryEven: (UnsplashPhoto | TenorGif | StorageFile | Waves | HeritageItem)[];
 
   @State()
   private navigatorOnline: boolean = navigator.onLine;
@@ -55,7 +55,7 @@ export class AppImage {
 
   private initImagesHistory(): Promise<void> {
     return new Promise<void>(async (resolve) => {
-      let imagesHistory: (UnsplashPhoto | TenorGif | StorageFile | Waves)[] = await this.imageHistoryService.get();
+      let imagesHistory: (UnsplashPhoto | TenorGif | StorageFile | Waves | HeritageItem)[] = await this.imageHistoryService.get();
 
       if (!imagesHistory || imagesHistory.length <= 0) {
         resolve();
@@ -73,7 +73,7 @@ export class AppImage {
     });
   }
 
-  private async selectAction(action: EditAction, image?: UnsplashPhoto | TenorGif | StorageFile) {
+  private async selectAction(action: EditAction, image?: UnsplashPhoto | TenorGif | StorageFile | HeritageItem) {
     const data: ImageAction = {
       action: action,
     };
@@ -119,6 +119,8 @@ export class AppImage {
           {this.renderGif()}
           {this.renderCustom()}
           {this.renderWaves()}
+          {this.renderHeritage()}
+
           {this.renderDeleteAction()}
         </div>
 
@@ -182,6 +184,20 @@ export class AppImage {
       </ion-button>
     );
   }
+
+  private renderHeritage() {
+    if (!this.navigatorOnline) {
+      // Unsplash not available offline
+      return undefined;
+    }
+
+    return (
+      <ion-button shape="round" onClick={() => this.selectAction(EditAction.OPEN_HERITAGE)} color="primary">
+        <ion-label>{i18n.state.editor.heritage_source}</ion-label>
+      </ion-button>
+    );
+  }
+
 
   private renderDeleteAction() {
     if ((!this.deck && !this.slide) || !this.deleteBackground) {

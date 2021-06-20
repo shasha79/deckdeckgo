@@ -18,22 +18,22 @@ export class ImageHistoryService {
     return del('deckdeckgo_images');
   }
 
-  async push(image: UnsplashPhoto | TenorGif | StorageFile) {
+  async push(image: UnsplashPhoto | TenorGif | StorageFile | HeritageItem) {
     if (!image) {
       return;
     }
 
-    let images: (UnsplashPhoto | TenorGif | StorageFile)[] = await this.get();
+    let images: (UnsplashPhoto | TenorGif | StorageFile | HeritageItem)[] = await this.get();
 
     if (!images) {
       images = [];
     }
 
-    const index: number = images.findIndex((filteredPhoto: UnsplashPhoto | TenorGif | StorageFile) => {
+    const index: number = images.findIndex((filteredPhoto: UnsplashPhoto | TenorGif | StorageFile | HeritageItem) => {
       if (filteredPhoto.hasOwnProperty('fullPath')) {
         return (filteredPhoto as StorageFile).fullPath === (image as StorageFile).fullPath;
       } else {
-        return (filteredPhoto as UnsplashPhoto | TenorGif).id === (image as UnsplashPhoto | TenorGif).id;
+        return (filteredPhoto as UnsplashPhoto | TenorGif).id === (image as UnsplashPhoto | TenorGif | HeritageItem).id;
       }
     });
 
@@ -50,7 +50,7 @@ export class ImageHistoryService {
     await set('deckdeckgo_images', images);
   }
 
-  get(): Promise<(UnsplashPhoto | TenorGif | StorageFile)[]> {
+  get(): Promise<(UnsplashPhoto | TenorGif | StorageFile | HeritageItem | HeritageItem)[]> {
     return get('deckdeckgo_images');
   }
 }

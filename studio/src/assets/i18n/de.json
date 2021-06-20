@@ -367,7 +367,9 @@
     "deck_style": "Deck Style",
     "slide_style": "Folien Style",
     "transform_element": "Ändere Element",
-    "transform_slide": "Ändere Folie"
+    "transform_slide": "Ändere Folie",
+    "heritage_source": "JHN"
+
   },
   "offline": {
     "editing": "Du bearbeitest gerade offline.",

@@ -26,6 +26,8 @@ export class ImageHelper {
       await this.openCustomModalRestricted(selectedElement, slide, deck, 'app-custom-images', EditAction.OPEN_CUSTOM);
     } else if (imageAction.action === EditAction.OPEN_SVG_WAVES) {
       await this.openModal(selectedElement, slide, deck, 'app-waves');
+    } else    if (imageAction.action === EditAction.OPEN_HERITAGE) {
+      await this.openModal(selectedElement, slide, deck, 'app-heritage');
     }
   }
 
@@ -62,7 +64,7 @@ export class ImageHelper {
     await this.openModal(selectedElement, slide, deck, componentTag, action);
   }
 
-  private appendImage(selectedElement: HTMLElement, slide: boolean, deck: boolean, image: UnsplashPhoto | TenorGif | StorageFile | Waves): Promise<void> {
+  private appendImage(selectedElement: HTMLElement, slide: boolean, deck: boolean, image: UnsplashPhoto | TenorGif | StorageFile | Waves | HeritageItem): Promise<void> {
     return new Promise<void>(async (resolve) => {
       if (!selectedElement || !image || !document) {
         resolve();
@@ -72,9 +74,9 @@ export class ImageHelper {
       busyStore.state.deckBusy = true;
 
       if (slide || deck) {
-        await this.appendBackgroundImg(selectedElement, image as UnsplashPhoto | TenorGif | StorageFile, deck);
+        await this.appendBackgroundImg(selectedElement, image as UnsplashPhoto | TenorGif | StorageFile | HeritageItem, deck);
       } else {
-        await this.appendContentImg(selectedElement, image as UnsplashPhoto | TenorGif | StorageFile);
+        await this.appendContentImg(selectedElement, image as UnsplashPhoto | TenorGif | StorageFile | HeritageItem);
       }
 
       resolve();
@@ -122,7 +124,7 @@ export class ImageHelper {
     });
   }
 
-  private updateDeckgoLazyImgAttributes(img: HTMLElement, image: UnsplashPhoto | TenorGif | StorageFile, background: boolean = false): HTMLElement {
+  private updateDeckgoLazyImgAttributes(img: HTMLElement, image: UnsplashPhoto | TenorGif | StorageFile | HeritageItem, background: boolean = false): HTMLElement {
     const deckgImg: DeckgoImgAction | undefined = ImageActionUtils.extractAttributes(image);
 
     if (deckgImg !== undefined) {
@@ -144,7 +146,7 @@ export class ImageHelper {
     return img;
   }
 
-  private appendContentImg(selectedElement: HTMLElement, image: UnsplashPhoto | TenorGif | StorageFile): Promise<void> {
+  private appendContentImg(selectedElement: HTMLElement, image: UnsplashPhoto | TenorGif | StorageFile | HeritageItem): Promise<void> {
     return new Promise<void>((resolve) => {
       let element: HTMLElement = SlotUtils.isNodeReveal(selectedElement) ? (selectedElement.firstElementChild as HTMLElement) : selectedElement;
 
@@ -170,7 +172,7 @@ export class ImageHelper {
     });
   }
 
-  private async appendBackgroundImg(selectedElement: HTMLElement, image: UnsplashPhoto | TenorGif | StorageFile | Waves, deck: boolean): Promise<void> {
+  private async appendBackgroundImg(selectedElement: HTMLElement, image: UnsplashPhoto | TenorGif | StorageFile | Waves | HeritageItem, deck: boolean): Promise<void> {
     const currentSlotElement: HTMLElement = selectedElement.querySelector(":scope > [slot='background']");
 
     if (currentSlotElement) {
@@ -185,7 +187,7 @@ export class ImageHelper {
       return;
     }
 
-    await this.appendChildImg(selectedElement, div, image as UnsplashPhoto | TenorGif | StorageFile, deck);
+    await this.appendChildImg(selectedElement, div, image as UnsplashPhoto | TenorGif | StorageFile | HeritageItem, deck);
   }
 
   private async appendChildSvg(selectedElement: HTMLElement, div: HTMLElement, waves: Waves, deck: boolean) {
@@ -216,7 +218,7 @@ export class ImageHelper {
     this.didChange.emit(selectedElement);
   }
 
-  private async appendChildImg(selectedElement: HTMLElement, div: HTMLElement, image: UnsplashPhoto | TenorGif | StorageFile, deck: boolean) {
+  private async appendChildImg(selectedElement: HTMLElement, div: HTMLElement, image: UnsplashPhoto | TenorGif | StorageFile | HeritageItem, deck: boolean) {
     const deckgoImg: HTMLElement = document.createElement(SlotType.IMG);
 
     const img: HTMLElement = this.updateDeckgoLazyImgAttributes(deckgoImg, image, true);

@@ -224,8 +224,8 @@ export namespace Components {
         "slide": boolean;
     }
     interface AppImageColumns {
-        "imagesEven": (UnsplashPhoto | TenorGif | StorageFile | Waves)[];
-        "imagesOdd": (UnsplashPhoto | TenorGif | StorageFile | Waves)[];
+        "imagesEven": (UnsplashPhoto | TenorGif | StorageFile | Waves | HeritageItem)[];
+        "imagesOdd": (UnsplashPhoto | TenorGif | StorageFile | Waves | HeritageItem)[];
     }
     interface AppImageElement {
         "selectedElement": HTMLElement;
@@ -1522,9 +1522,9 @@ declare namespace LocalJSX {
         "slide"?: boolean;
     }
     interface AppImageColumns {
-        "imagesEven"?: (UnsplashPhoto | TenorGif | StorageFile | Waves)[];
-        "imagesOdd"?: (UnsplashPhoto | TenorGif | StorageFile | Waves)[];
-        "onSelectImage"?: (event: CustomEvent<UnsplashPhoto | TenorGif | StorageFile | Waves>) => void;
+        "imagesEven"?: (UnsplashPhoto | TenorGif | StorageFile | Waves | HeritageItem)[];
+        "imagesOdd"?: (UnsplashPhoto | TenorGif | StorageFile | Waves | HeritageItem)[];
+        "onSelectImage"?: (event: CustomEvent<UnsplashPhoto | TenorGif | StorageFile | Waves | HeritageItem>) => void;
     }
     interface AppImageElement {
         "selectedElement"?: HTMLElement;

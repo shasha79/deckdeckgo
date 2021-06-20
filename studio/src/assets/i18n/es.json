@@ -367,7 +367,9 @@
     "deck_style": "Estilo del paquete",
     "slide_style": "Estilo de la diapositiva",
     "transform_element": "Elemento de transformación",
-    "transform_slide": "Transformar diapositiva"
+    "transform_slide": "Transformar diapositiva",
+    "heritage_source": "JHN"
+
   },
   "offline": {
     "editing": "Estás editando sin conexión.",

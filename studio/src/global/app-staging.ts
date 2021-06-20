@@ -69,4 +69,7 @@ setupDeckGoConfig({
   google: {
     fontsUrl: 'https://fonts.googleapis.com/css?display=swap&family=',
   },
+  heritage: {
+    url: "https://dj-story.jhn.ngo/api/v1/"
+  }
 });

@@ -7,12 +7,12 @@ import {Component, Event, EventEmitter, Prop, h} from '@stencil/core';
 })
 export class AppImageColumns {
   @Prop()
-  imagesOdd: (UnsplashPhoto | TenorGif | StorageFile | Waves)[];
+  imagesOdd: (UnsplashPhoto | TenorGif | StorageFile | Waves | HeritageItem)[];
 
   @Prop()
-  imagesEven: (UnsplashPhoto | TenorGif | StorageFile | Waves)[];
+  imagesEven: (UnsplashPhoto | TenorGif | StorageFile | Waves | HeritageItem)[];
 
-  @Event() private selectImage: EventEmitter<UnsplashPhoto | TenorGif | StorageFile | Waves>;
+  @Event() private selectImage: EventEmitter<UnsplashPhoto | TenorGif | StorageFile | Waves | HeritageItem>;
 
   render() {
     if ((!this.imagesEven || this.imagesEven.length <= 0) && (!this.imagesOdd || this.imagesOdd.length <= 0)) {
@@ -27,9 +27,9 @@ export class AppImageColumns {
     }
   }
 
-  private renderImages(images: (UnsplashPhoto | TenorGif | StorageFile | Waves)[]) {
+  private renderImages(images: (UnsplashPhoto | TenorGif | StorageFile | Waves | HeritageItem)[]) {
     if (images && images.length > 0) {
-      return images.map((image: UnsplashPhoto | TenorGif | StorageFile | Waves) => {
+      return images.map((image: UnsplashPhoto | TenorGif | StorageFile | Waves | HeritageItem) => {
         if (image.hasOwnProperty('urls')) {
           return this.renderStockPhoto(image as UnsplashPhoto);
         } else if (image.hasOwnProperty('media')) {
@@ -38,6 +38,8 @@ export class AppImageColumns {
           return this.renderCustomImage(image as StorageFile);
         } else if (image.hasOwnProperty('viewBox')) {
           return this.renderWaves(image as Waves);
+        } else if (image.hasOwnProperty('image_url')) {
+          return this.renderHeritageItem(image as HeritageItem);  
         } else {
           return undefined;
         }
@@ -126,4 +128,42 @@ export class AppImageColumns {
       return undefined;
     }
   }
+
+  private renderHeritageItem(heritageItem: HeritageItem) {
+    if (heritageItem.preview_url) {
+      return (
+        <div class="image ion-padding" custom-tappable onClick={() => this.selectImage.emit(heritageItem)}>
+          <div class="image-container">
+            <deckgo-lazy-img
+              imgSrc={heritageItem.preview_url}
+              imgAlt={heritageItem.title ? heritageItem.title : heritageItem.description ? heritageItem.description : "---"}
+              custom-loader={true}></deckgo-lazy-img>
+             {this.renderHeritageItemCredits(heritageItem)}
+          </div>
+        </div>
+      );
+    } else {
+      return undefined;
+    }
+  }
+
+  private renderHeritageItemCredits(heritageItem: HeritageItem) {
+    if (!heritageItem.rights) {
+      return undefined;
+    } else {
+      return (
+        <ion-label class="photo-credits">
+          <a
+            href={heritageItem.image_url + '?utm_source=DeckDeckGo&utm_medium=referral'}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={($event: UIEvent) => $event.stopPropagation()}>
+            {heritageItem.rights}
+          </a>
+        </ion-label>
+      );
+    }
+  }
+
+
 }

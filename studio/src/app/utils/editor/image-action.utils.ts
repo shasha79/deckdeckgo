@@ -4,7 +4,7 @@ export interface DeckgoImgAction {
 }
 
 export class ImageActionUtils {
-  static extractAttributes(image: UnsplashPhoto | TenorGif | StorageFile | Waves): DeckgoImgAction | undefined {
+  static extractAttributes(image: UnsplashPhoto | TenorGif | StorageFile | Waves | HeritageItem): DeckgoImgAction | undefined {
     if (!image || image === undefined) {
       return undefined;
     }
