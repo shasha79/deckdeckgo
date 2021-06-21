@@ -35,6 +35,12 @@ export class ImageActionUtils {
         src: storageFile.downloadUrl,
         label: storageFile.downloadUrl,
       };
+    } else if (image.hasOwnProperty('preview_url')) {
+      const heritageItem = image as HeritageItem;
+      return {
+        src: heritageItem.preview_url,
+        label: heritageItem.title,
+      };
     }
 
     return undefined;

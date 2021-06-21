@@ -1,5 +1,5 @@
 {
-  "API_URL": "https://localhost/beta/api",
+  "API_URL": "https://dj-story.jhn.ngo/api/v1",
   "PRESENTATION_URL": "https://beta.deckdeckgo.io",
   "UNSPLASH_URL": "https://localhost/beta/unsplash/",
   "FIREBASE_API_KEY": "AIzaSyDOC1HFzDfuFRH-WdUAJCzDDLA3c88KRw4",

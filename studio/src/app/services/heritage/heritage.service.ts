@@ -19,7 +19,7 @@ export class HeritageService {
     return new Promise<HeritageItemSearchResponse | undefined>(async (resolve) => {
       const config: EnvironmentHeritageConfig = EnvironmentConfigService.getInstance().get('heritage');
 
-      var offset = 20*(+next);
+      var offset = 20*(+next-1);
 
       const searchUrl: string =
         config.url +

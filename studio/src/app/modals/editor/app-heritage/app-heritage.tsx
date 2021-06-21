@@ -2,8 +2,8 @@ import {Component, Element, Listen, State, h} from '@stencil/core';
 
 import i18n from '../../../stores/i18n.store';
 
-import {ApiPhotoService} from '../../../services/api/photo/api.photo.service';
-import {ApiPhotoFactoryService} from '../../../services/api/photo/api.photo.factory.service';
+import {HeritageService} from '../../../services/heritage/heritage.service';
+
 import {ImageHistoryService} from '../../../services/editor/image-history/image-history.service';
 
 @Component({
@@ -13,14 +13,14 @@ import {ImageHistoryService} from '../../../services/editor/image-history/image-
 export class AppHeritage {
   @Element() el: HTMLElement;
 
-  private photoService: ApiPhotoService;
+  private heritageService: HeritageService;
   private imageHistoryService: ImageHistoryService;
 
   @State()
-  private photosOdd: UnsplashPhoto[];
+  private photosOdd: HeritageItem[];
 
   @State()
-  private photosEven: UnsplashPhoto[];
+  private photosEven: HeritageItem[];
 
   @State()
   private searchTerm: string;
@@ -36,7 +36,7 @@ export class AppHeritage {
   private searching: boolean = false;
 
   constructor() {
-    this.photoService = ApiPhotoFactoryService.getInstance();
+    this.heritageService = HeritageService.getInstance();
     this.imageHistoryService = ImageHistoryService.getInstance();
   }
 
@@ -60,9 +60,7 @@ export class AppHeritage {
         return;
       }
 
-      const photo: UnsplashPhoto = $event.detail;
-
-      await this.photoService.registerDownload(photo.id);
+      const photo: HeritageItem = $event.detail;
 
       await this.imageHistoryService.push(photo);
 
@@ -101,16 +99,16 @@ export class AppHeritage {
 
       this.searching = true;
 
-      const unsplashResponse: UnsplashSearchResponse | undefined = await this.photoService.getPhotos(this.searchTerm, this.paginationNext);
+      const heritageResponse: HeritageItemSearchResponse | undefined = await this.heritageService.getHeritageItems(this.searchTerm, this.paginationNext);
 
       this.searching = false;
 
-      if (!unsplashResponse) {
+      if (!heritageResponse) {
         resolve();
         return;
       }
 
-      const photos: UnsplashPhoto[] = unsplashResponse.results;
+      const photos: HeritageItem[] = heritageResponse.results;
 
       if (!photos || photos.length <= 0) {
         this.emptyPhotos();
@@ -144,7 +142,7 @@ export class AppHeritage {
         }, 100);
       }
 
-      this.disableInfiniteScroll = this.paginationNext * 10 >= unsplashResponse.total;
+      this.disableInfiniteScroll = false; //TODO: this.paginationNext * 10 >= heritageResponse.total;
 
       this.paginationNext++;
 

@@ -148,7 +148,7 @@ export class AppImageColumns {
   }
 
   private renderHeritageItemCredits(heritageItem: HeritageItem) {
-    if (!heritageItem.rights) {
+    if (!heritageItem.title) {
       return undefined;
     } else {
       return (
@@ -158,7 +158,7 @@ export class AppImageColumns {
             target="_blank"
             rel="noopener noreferrer"
             onClick={($event: UIEvent) => $event.stopPropagation()}>
-            {heritageItem.rights}
+            {heritageItem.title}
           </a>
         </ion-label>
       );
