@@ -217,6 +217,8 @@ export namespace Components {
     }
     interface AppGoOnline {
     }
+    interface AppHeritage {
+    }
     interface AppImage {
         "deck": boolean;
         "deleteBackground": boolean;
@@ -759,6 +761,12 @@ declare global {
         prototype: HTMLAppGoOnlineElement;
         new (): HTMLAppGoOnlineElement;
     };
+    interface HTMLAppHeritageElement extends Components.AppHeritage, HTMLStencilElement {
+    }
+    var HTMLAppHeritageElement: {
+        prototype: HTMLAppHeritageElement;
+        new (): HTMLAppHeritageElement;
+    };
     interface HTMLAppImageElement extends Components.AppImage, HTMLStencilElement {
     }
     var HTMLAppImageElement: {
@@ -1205,6 +1213,7 @@ declare global {
         "app-gif": HTMLAppGifElement;
         "app-go-offline": HTMLAppGoOfflineElement;
         "app-go-online": HTMLAppGoOnlineElement;
+        "app-heritage": HTMLAppHeritageElement;
         "app-image": HTMLAppImageElement;
         "app-image-columns": HTMLAppImageColumnsElement;
         "app-image-element": HTMLAppImageElementElement;
@@ -1514,6 +1523,8 @@ declare namespace LocalJSX {
         "onDoneOnline"?: (event: CustomEvent<void>) => void;
         "onInProgress"?: (event: CustomEvent<boolean>) => void;
     }
+    interface AppHeritage {
+    }
     interface AppImage {
         "deck"?: boolean;
         "deleteBackground"?: boolean;
@@ -1805,6 +1816,7 @@ declare namespace LocalJSX {
         "app-gif": AppGif;
         "app-go-offline": AppGoOffline;
         "app-go-online": AppGoOnline;
+        "app-heritage": AppHeritage;
         "app-image": AppImage;
         "app-image-columns": AppImageColumns;
         "app-image-element": AppImageElement;
@@ -1931,6 +1943,7 @@ declare module "@stencil/core" {
             "app-gif": LocalJSX.AppGif & JSXBase.HTMLAttributes<HTMLAppGifElement>;
             "app-go-offline": LocalJSX.AppGoOffline & JSXBase.HTMLAttributes<HTMLAppGoOfflineElement>;
             "app-go-online": LocalJSX.AppGoOnline & JSXBase.HTMLAttributes<HTMLAppGoOnlineElement>;
+            "app-heritage": LocalJSX.AppHeritage & JSXBase.HTMLAttributes<HTMLAppHeritageElement>;
             "app-image": LocalJSX.AppImage & JSXBase.HTMLAttributes<HTMLAppImageElement>;
             "app-image-columns": LocalJSX.AppImageColumns & JSXBase.HTMLAttributes<HTMLAppImageColumnsElement>;
             "app-image-element": LocalJSX.AppImageElement & JSXBase.HTMLAttributes<HTMLAppImageElementElement>;
